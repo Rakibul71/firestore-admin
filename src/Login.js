@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth, logInWithEmailAndPassword, signInWithGoogle, db } from "./firebase";
+// import { auth, logInWithEmailAndPassword, signInWithGoogle, db } from "./firebase";
+import { auth, signInWithGoogle, db } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import "./Login.css";
 
+import {
+  GoogleAuthProvider,
+  getAuth,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+} from "firebase/auth";
 
 
-
-import { query, collection, getDocs, where } from "firebase/firestore";
+import { query, collection, getDocs, where, doc, getDoc } from "firebase/firestore";
 
 
 function Login() {
@@ -17,84 +26,65 @@ function Login() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
 
-  // console.log(logInWithEmailAndPassword)
 
-  // const logInWithEmailAndPassword = (email, password) => {
-  //   logInWithEmailAndPassword(email, password)
-  // }
 
-  useEffect(() => {
-    if (loading) {
-      // maybe trigger a loading screen
-      return;
-    }
-    if (user) navigate("/dashboard");
-    // console.log(user);
-  }, [user, loading]);
-
-  // try to get all data
-  // const querySnapshot = await getDocs(collection(db, "users"));
-  // querySnapshot.forEach((doc) => {
-  //   // doc.data() is never undefined for query doc snapshots
-  //   console.log(doc.id, " => ", doc.data());
-  // });
-
-  // console.log(allData)
-
-  // try as a demo 
-
-  // const fetchUserName = async () => {
-  //   try {
-  //     const q = query(collection(db, "users"), where("uid", "==", user?.uid));
-  //     const doc = await getDocs(q);
-  //     const data = doc.docs[0].data();
-  //     console.log(data);
-
-  //     setName(data.name);
-  //     // if (data.isAdmin == true) {
-  //     //   return navigate("/dashboard");
-  //     // }
-  //     // else {
-  //     //   return navigate("/error");
-  //     // }
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("An error occured while fetching user data");
+  // useEffect(() => {
+  //   if (loading) {
+  //     // maybe trigger a loading screen
+  //     return;
   //   }
-  // };
-
-
-
-  // useEffect(() => {
-  //   if (loading) return;
-  //   if (!user) return navigate("/dashboard");
+  //   if (user) navigate("/dashboard");
   //   // console.log(user);
-  //   // console.log(user.email);
-  //   // fetchUserName();
-  // }, [user, loading])
-
-  // useEffect(() => {
-  //   // test start
-
-  //   // const q = query(collection(db, "users"), where("uid", "==", user?.uid));
-  //   // const doc = getDocs(q);
-  //   // const data = doc.docs[0].data();
-
-  //   // test end
-
-  //   if (loading) return;
-  //   if (!user) return navigate("/");
-  //   // console.log(user);
-  //   // console.log(user.email);
-  //   fetchUserName();
   // }, [user, loading]);
 
-  // end of demo 
 
-  const logInEmailPass = (() => {
-    const login = logInWithEmailAndPassword(email, password)
-    console.log(login);
-  })
+  // demo
+
+
+  // sign in
+
+
+
+
+  // login
+
+  const logInWithEmailAndPassword = async (email, password) => {
+    // const navigate = useNavigate();
+    try {
+      let response = await signInWithEmailAndPassword(auth, email, password);
+      let docRef = doc(db, "users", response.user.uid);
+      // let doc = await collectionRef.doc();
+      let querySnapshot = await getDoc(docRef);
+      if (querySnapshot.exists()) {
+        // console.log(querySnapshot.data());3
+        // console.log(querySnapshot.data());
+        const loginData = querySnapshot.data()
+        console.log(typeof (loginData))
+        console.log(loginData.isAdmin)
+        if (loginData.isAdmin) {
+          navigate("/dashboard")
+        }
+        else {
+          navigate("/error")
+        }
+      }
+      // console.log(querySnapshot);
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+
+
+  };
+  // end demo
+
+
+
+
+  // const logInEmailPass = (() => {
+  //   const login = logInWithEmailAndPassword(email, password)
+  //   console.log(login);
+  // })
 
 
   return (
@@ -116,10 +106,10 @@ function Login() {
         />
         <button
           className="login__btn"
-          // onClick={() => logInWithEmailAndPassword(email, password)
+          onClick={() => logInWithEmailAndPassword(email, password)
 
-          // }
-          onClick={logInEmailPass}
+          }
+        // onClick={logInEmailPass}
         >
           Login
         </button>
