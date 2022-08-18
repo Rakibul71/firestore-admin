@@ -15,16 +15,24 @@ import {
   collection,
   where,
   addDoc,
+  setDoc,
+  doc,
+  getDoc
 } from "firebase/firestore";
 
+
+//using navigation
+import { Link, useNavigate } from "react-router-dom";
+// const navigate = useNavigate();
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDIXJ5YT7hoNbBFqK3TBcV41-TzIO-7n7w",
-  authDomain: "fir-auth-6edd8.firebaseapp.com",
-  projectId: "fir-auth-6edd8",
-  storageBucket: "fir-auth-6edd8.appspot.com",
-  messagingSenderId: "904760319835",
-  appId: "1:904760319835:web:44fd0d957f114b4e51447e",
-  measurementId: "G-Q4TYKH9GG7",
+  apiKey: "AIzaSyCVbH3s0_byloD9vtYK0HwfyggdoneEGqA",
+  authDomain: "test-project-70a3d.firebaseapp.com",
+  projectId: "test-project-70a3d",
+  storageBucket: "test-project-70a3d.appspot.com",
+  messagingSenderId: "556424654873",
+  appId: "1:556424654873:web:9cdbf28c25fbb3bd157a88",
+  measurementId: "G-2D7Y1J0NZP"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -53,25 +61,64 @@ const signInWithGoogle = async () => {
   }
 };
 
+// working on that's part
+
+
 const logInWithEmailAndPassword = async (email, password) => {
+  // const navigate = useNavigate();
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    let response = await signInWithEmailAndPassword(auth, email, password);
+    let docRef = doc(db, "users", response.user.uid);
+    // let doc = await collectionRef.doc();
+    let querySnapshot = await getDoc(docRef);
+    if (querySnapshot.exists()) {
+      // console.log(querySnapshot.data());3
+      // console.log(querySnapshot.data());
+      const loginData = querySnapshot.data()
+      console.log(typeof (loginData))
+      console.log(loginData.isAdmin)
+      // if (loginData.isAdmin = true) {
+      //   navigate("/dashboard")
+      // }
+    }
+    // console.log(querySnapshot);
   } catch (err) {
     console.error(err);
     alert(err.message);
   }
+
+
 };
 
 const registerWithEmailAndPassword = async (name, email, password) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
-    await addDoc(collection(db, "users"), {
+    // await addDoc(collection(db, "users"), {
+    //   uid: user.uid,
+    //   name,
+
+    //   authProvider: "local",
+    //   email,
+    //   isAdmin: false
+    // });
+
+    // await db.collection("users").doc("LA").set({
+    //   uid: user.uid,
+    //   name,
+    //   authProvider: "local",
+    //   email,
+    //   isAdmin: false
+    // })
+
+    await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       name,
       authProvider: "local",
       email,
+      isAdmin: false
     });
+
   } catch (err) {
     console.error(err);
     alert(err.message);
