@@ -17,6 +17,7 @@ import {
 
 
 import { query, collection, getDocs, where, doc, getDoc } from "firebase/firestore";
+import Dashboard from "./Dashboard";
 
 
 function Login() {
@@ -63,6 +64,7 @@ function Login() {
         console.log(loginData.isAdmin)
         if (loginData.isAdmin) {
           navigate("/dashboard")
+          // <Dashboard />
         }
         else {
           navigate("/error")

@@ -26,7 +26,7 @@
 
 //   useEffect(() => {
 //     if (loading) return;
-//     if (!user) return navigate("/");
+//     if (user) return navigate("/");
 
 //     fetchUserName();
 //   }, [user, loading]);
@@ -51,6 +51,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db, logout } from "./firebase";
+import Pagination from './Pagination';
 
 const Dashboard = () => {
   const [allData, setAllData] = useState([])
@@ -77,12 +78,17 @@ const Dashboard = () => {
   return (
     <div>
       <h1>This is dash board</h1>
-      {
+      {/* {
         allData.map((val, id) => {
           // console.log(val.id);
-          return <p kay={id}>{val.name}</p>
+          return <>
+            <p kay={id}>{val.name}</p>
+            <h2>what</h2>
+          </>
         })
-      }
+      } */}
+
+      <Pagination data={allData} />
     </div>
   );
 };
